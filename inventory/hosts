@@ -1,0 +1,30 @@
+node01 ansible_host=node01.kube.gamma.red
+node02 ansible_host=node02.kube.gamma.red
+node03 ansible_host=node03.kube.gamma.red
+
+[hcloud]
+node01
+node02
+node03
+
+[kube_control_plane]
+node01
+node02
+node03
+
+[kube_node]
+node01
+node02
+node03
+
+[etcd]
+node01
+node02
+node03
+
+[calico_rr]
+
+[k8s_cluster:children]
+kube_control_plane
+kube_node
+calico_rr

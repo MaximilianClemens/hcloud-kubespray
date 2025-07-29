@@ -1,0 +1,6 @@
+kubespray/
+.collections/
+.roles/
+.venv/
+vault.yml
+*.pyc

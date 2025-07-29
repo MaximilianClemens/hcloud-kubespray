@@ -1,0 +1,5 @@
+---
+plugin: hcloud
+cache: False
+api_token: "{{ lookup('yaml', 'vault.yml', 'hcloud_token')}}"
+hostname: '{{ name | lower() | replace(".kube.gamma.red", "") }}'
