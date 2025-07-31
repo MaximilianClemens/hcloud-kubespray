@@ -7,6 +7,11 @@ node01
 node02
 ; node03
 
+[wireguard]
+node01
+node02
+; node03
+
 [kube_control_plane]
 node01
 ; node02

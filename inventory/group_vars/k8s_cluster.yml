@@ -97,26 +97,64 @@ metallb_speaker_enabled: false # true
 
 ###
 
-# # Calico BGP aktivieren
-calico_bgp_enabled: true
-# calico_rr_enabled: false  # Erstmal ohne Route Reflector
-calico_node_mesh_enabled: true
+# # # Calico BGP aktivieren
+# calico_bgp_enabled: true
+# # calico_rr_enabled: false  # Erstmal ohne Route Reflector
+# # calico_node_mesh_enabled: true
 
-# # BGP AS Number
-# calico_as_number: 64512  # Deine AS-Nummer
+# # # BGP AS Number
+# # calico_as_number: 64512  # Deine AS-Nummer
 
-# # Calico IPIP deaktivieren für native BGP
-calico_network_backend: bird
+# # # Calico IPIP deaktivieren für native BGP
+# calico_network_backend: bird
 
-#00:24
-calico_ipip_mode: 'Never'
-calico_vxlan_mode: 'Never'
-# calico_advertise_cluster_ips: true
-# calico_additional_static_routes:
-#   - cidr: "192.168.0.0/22"
-#     gateway: "blackhole"
-#     node_selector: "kubernetes.io/hostname == 'node02'"
+# #00:24
+# calico_ipip_mode: 'Never'
+# calico_vxlan_mode: 'Never'
+# # calico_advertise_cluster_ips: true
+# # calico_additional_static_routes:
+# #   - cidr: "192.168.0.0/22"
+# #     gateway: "blackhole"
+# #     node_selector: "kubernetes.io/hostname == 'node02'"
 
 
-# # Optional: Specific Node-zu-Node BGP
-calico_node_to_node_mesh: true
+# # # Optional: Specific Node-zu-Node BGP
+# # calico_node_to_node_mesh: true
+
+# calico_wireguard_enabled: true
+
+
+
+# Calico Overlay-Modus aktivieren
+# calico_network_backend: vxlan  # oder "bird" für BGP
+# calico_ipip_mode: Never       # für IPIP overlay
+# calico_vxlan_mode: Always      # für VXLAN overlay
+
+# # WireGuard Verschlüsselung
+# calico_wireguard_enabled: true
+
+# # Verhindere externe IP-Nutzung
+# calico_advertise_cluster_ips: false
+# calico_node_ip_auto_detection_method: "can-reach=8.8.8.8"  # oder spezifische Interface
+
+
+
+# # In Kubespray direkt
+# calico_network_backend: bird
+# calico_ipip_mode: Never
+# calico_vxlan_mode: Never
+
+# # BGP
+# calico_node_mesh_enabled: true
+# calico_rr_enabled: false
+
+# # IPSec
+# felix_ipsec_enabled: true
+# calico_ipsec_psk: "aca4124ea561537314d796e22cdd0428f7aa8697885dc3179d37ab5ddd387e3b"
+
+# # IP Detection
+# calico_node_ip_auto_detection_method: "can-reach=8.8.8.8" # interface=eth0
+
+# #
+# calico_node_to_node_mesh: true
+# calico_bgp_enabled: true

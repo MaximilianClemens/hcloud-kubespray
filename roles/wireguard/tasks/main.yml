@@ -1,0 +1,45 @@
+- name: Install WireGuard
+  apt:
+    name: wireguard
+    state: present
+    update_cache: yes
+
+- name: Generate private key if not exists
+  command: wg genkey
+  register: private_key
+  # changed_when: true
+  args:
+    creates: /etc/wireguard/private.key
+
+
+- name: Save private key to file
+  copy:
+    content: "{{ private_key.stdout }}"
+    dest: /etc/wireguard/private.key
+    mode: '0600'
+  when: private_key is defined and private_key.stdout is defined and private_key.changed
+
+- name: Slurp private key (base64-encoded)
+  slurp:
+    src: /etc/wireguard/private.key
+  register: private_key_file
+
+- name: Decode private key
+  set_fact:
+    wg_private_key: "{{ private_key_file.content | b64decode }}"
+
+
+- name: Generate public key
+  command: /bin/bash -c "echo '{{ wg_private_key }}' | wg pubkey"
+  register: public_key
+
+- name: Set fact for peer keys
+  set_fact:
+    my_public_key: "{{ public_key.stdout }}"
+
+- name: Template WireGuard config
+  template:
+    src: wg0.conf.j2
+    dest: /etc/wireguard/wg0.conf
+    mode: '0600'
+  notify: restart wireguard

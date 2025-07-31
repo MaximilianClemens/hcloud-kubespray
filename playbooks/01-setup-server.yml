@@ -135,20 +135,20 @@
         location: '{{ hcloud_location }}'
         ssh_keys: '{{ hcloud_keys }}'
         firewalls:
-          - 00-default
-          - 02-k8s-internal
+          # - 00-default
+          # - 02-k8s-internal
         api_token: '{{ hcloud_token }}'
       register: server_result
 
-    - name: Assign private IP to server
-      delegate_to: localhost
-      hetzner.hcloud.server_network:
-        network: k8s-network
-        server: '{{ hcloud_hostname }}'
-        ip: '{{ access_ip }}'
-        state: present
-        api_token: '{{ hcloud_token }}'
-      when: access_ip is defined
+    # - name: Assign private IP to server
+    #   delegate_to: localhost
+    #   hetzner.hcloud.server_network:
+    #     network: k8s-network
+    #     server: '{{ hcloud_hostname }}'
+    #     ip: '{{ access_ip }}'
+    #     state: present
+    #     api_token: '{{ hcloud_token }}'
+    #   when: access_ip is defined
 
     - name: Reload Inventory
       ansible.builtin.meta: refresh_inventory

@@ -1,2 +1,3 @@
-hcloud_location: nbg1 #fsn1
+hcloud_location: fsn1 #nbg1
 access_ip: 10.0.1.6
+# ip: 10.0.1.6

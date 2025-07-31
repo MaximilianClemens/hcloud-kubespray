@@ -1,0 +1,5 @@
+- name: Setup WireGuard mesh
+  hosts: wireguard
+  become: true
+  roles:
+    - wireguard
