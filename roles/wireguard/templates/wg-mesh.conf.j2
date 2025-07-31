@@ -1,0 +1,19 @@
+[Interface]
+Address = {{ access_ip }}/24
+PrivateKey = {{ wg_private_key }}
+ListenPort = 51820
+
+Table = off
+{% for host in groups['wireguard'] if host != inventory_hostname %}
+PostUp = ip route add 192.168.0.0/22 via {{ hostvars[host]['access_ip'] }} dev wg-mesh metric {{ 2000 + loop.index0 }}
+PostDown = ip route del 192.168.0.0/22 via {{ hostvars[host]['access_ip'] }} dev wg-mesh metric {{ 2000 + loop.index0 }}
+{% endfor %}
+
+
+{% for host in groups['wireguard'] if host != inventory_hostname %}
+[Peer]
+PublicKey = {{ hostvars[host]['my_public_key'] }}
+AllowedIPs = {{ hostvars[host]['access_ip'] }}/32, 192.168.0.0/22
+Endpoint = {{ hostvars[host]['ansible_host'] }}:51820
+PersistentKeepalive = 25
+{% endfor %}

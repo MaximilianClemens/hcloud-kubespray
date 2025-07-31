@@ -2,7 +2,7 @@
 - name: restart wireguard
   become: true
   systemd:
-    name: wg-quick@wg0
+    name: wg-quick@wg-mesh
     state: restarted
     enabled: true
     daemon_reload: true

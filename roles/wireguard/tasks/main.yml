@@ -39,7 +39,7 @@
 
 - name: Template WireGuard config
   template:
-    src: wg0.conf.j2
-    dest: /etc/wireguard/wg0.conf
+    src: wg-mesh.conf.j2
+    dest: /etc/wireguard/wg-mesh.conf
     mode: '0600'
   notify: restart wireguard
