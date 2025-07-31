@@ -5,7 +5,7 @@
     - name: "Create Network: k8s-network"
       hetzner.hcloud.network:
         name: k8s-network
-        ip_range: 10.0.0.0/16
+        ip_range: 10.0.1.0/24
         state: present
         api_token: '{{ hcloud_token }}'
 
@@ -128,7 +128,7 @@
     - name: Create a server
       delegate_to: localhost
       hetzner.hcloud.server:
-        name: '{{ ansible_host }}'
+        name: '{{ hcloud_hostname }}'
         server_type: '{{ hcloud_type }}'
         image: '{{ hcloud_image }}'
         state: '{{ hcloud_state | default("present") }}'
@@ -144,7 +144,7 @@
       delegate_to: localhost
       hetzner.hcloud.server_network:
         network: k8s-network
-        server: '{{ ansible_host }}'
+        server: '{{ hcloud_hostname }}'
         ip: '{{ access_ip }}'
         state: present
         api_token: '{{ hcloud_token }}'
@@ -159,7 +159,7 @@
         domain: 'gamma.red'
         type: A
         solo: true
-        record: '{{ ansible_host | lower() | replace(".gamma.red", "") }}'
+        record: '{{ hcloud_hostname | lower() | replace(".gamma.red", "") }}'
         value: '{{ ipv4 }}'
         username: '{{ inwx_username }}'
         password: '{{ inwx_password }}'
@@ -170,7 +170,7 @@
         domain: 'gamma.red'
         type: AAAA
         solo: true
-        record: '{{ ansible_host | lower() | replace(".gamma.red", "") }}'
+        record: '{{ hcloud_hostname | lower() | replace(".gamma.red", "") }}'
         value: '{{ ipv6 }}'
         username: '{{ inwx_username }}'
         password: '{{ inwx_password }}'
@@ -178,18 +178,18 @@
     - name: Create PTR-Record for ipv4 at hcloud
       delegate_to: localhost
       hetzner.hcloud.rdns:
-        server: '{{ ansible_host }}'
+        server: '{{ hcloud_hostname }}'
         ip_address: '{{ ipv4 }}'
-        dns_ptr: '{{ ansible_host }}'
+        dns_ptr: '{{ hcloud_hostname }}'
         state: present
         api_token: '{{ hcloud_token }}'
 
     - name: Create PTR-Record for ipv6 at hcloud
       delegate_to: localhost
       hetzner.hcloud.rdns:
-        server: '{{ ansible_host }}'
+        server: '{{ hcloud_hostname }}'
         ip_address: '{{ ipv6 }}'
-        dns_ptr: '{{ ansible_host }}'
+        dns_ptr: '{{ hcloud_hostname }}'
         state: present
         api_token: '{{ hcloud_token }}'
 

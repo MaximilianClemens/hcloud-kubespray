@@ -56,12 +56,67 @@ metrics_server_enabled: true
 registry_enabled: false
 
 # MetalLB Installation für LoadBalancer-Services
-metallb_enabled: true
-metallb_speaker_enabled: true
-metallb_namespace: metallb-system
-metallb_config:
-  address_pools:
-    primary:
-      ip_range:
-        - 10.0.2.100-10.0.2.200  # Separater Range für LoadBalancer
-      protocol: layer2
+metallb_enabled: false # true
+metallb_speaker_enabled: false # true
+# metallb_namespace: metallb-system
+# metallb_protocol: "layer2"
+# metallb_config:
+#   address_pools:
+#     primary:
+#       ip_range:
+#         - 10.0.1.100-10.0.1.200
+#       protocol: layer2
+
+
+# metallb_config:
+#   address_pools:
+#     primary:
+#       ip_range:
+#         - 10.0.1.100-10.0.1.200
+#       protocol: layer2
+
+
+
+# metallb_enabled: true
+# metallb_speaker_enabled: true
+# metallb_namespace: metallb-system
+# metallb_protocol: bgp
+
+# metallb_config:
+#   peers:
+#     - peer_address: 10.0.1.2  # Unser virtueller Router
+#       peer_asn: 65001
+#       my_asn: 65002
+#       source_address: 10.0.1.6  # IP deiner ersten Node
+#   address_pools:
+#     primary:
+#       ip_range:
+#         - 10.0.2.100-10.0.2.200
+#       protocol: bgp
+#       auto_assign: true
+
+###
+
+# # Calico BGP aktivieren
+calico_bgp_enabled: true
+# calico_rr_enabled: false  # Erstmal ohne Route Reflector
+calico_node_mesh_enabled: true
+
+# # BGP AS Number
+# calico_as_number: 64512  # Deine AS-Nummer
+
+# # Calico IPIP deaktivieren für native BGP
+calico_network_backend: bird
+
+#00:24
+calico_ipip_mode: 'Never'
+calico_vxlan_mode: 'Never'
+# calico_advertise_cluster_ips: true
+# calico_additional_static_routes:
+#   - cidr: "192.168.0.0/22"
+#     gateway: "blackhole"
+#     node_selector: "kubernetes.io/hostname == 'node02'"
+
+
+# # Optional: Specific Node-zu-Node BGP
+calico_node_to_node_mesh: true

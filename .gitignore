@@ -4,3 +4,8 @@ kubespray/
 .venv/
 vault.yml
 *.pyc
+
+
+mainfests
+mainfests2
+mainfests3
