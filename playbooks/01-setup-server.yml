@@ -1,47 +1,27 @@
 ---
-- name: hcloud network and firewall
+- name: hcloud firewall
   hosts: localhost
   tasks:
-    - name: "Create Network: k8s-network"
-      hetzner.hcloud.network:
-        name: k8s-network
-        ip_range: 10.0.1.0/24
-        state: present
-        api_token: '{{ hcloud_token }}'
-
-    - name: "Create Subnet: k8s-subnet"
-      hetzner.hcloud.subnetwork:
-        network: k8s-network
-        ip_range: 10.0.1.0/24
-        type: cloud
-        network_zone: eu-central
-        state: present
-        api_token: '{{ hcloud_token }}'
-
-    - name: "Create Rule: 00-default"
+    - name: "Create Firewall: web-server"
       hetzner.hcloud.firewall:
-        name: 00-default
+        name: web-server
         rules:
+          # ICMP (Ping)
           - direction: in
             protocol: icmp
             source_ips:
               - 0.0.0.0/0
               - ::/0
-            description: allow icmp in
+            description: allow icmp
+          # SSH
           - direction: in
             protocol: tcp
             source_ips:
               - 0.0.0.0/0
               - ::/0
             port: 22
-            description: allow ssh on 22
-        state: present
-        api_token: '{{ hcloud_token }}'
-
-    - name: "Create Rule: 01-web"
-      hetzner.hcloud.firewall:
-        name: 01-web
-        rules:
+            description: allow ssh
+          # HTTP
           - direction: in
             protocol: tcp
             source_ips:
@@ -49,6 +29,7 @@
               - ::/0
             port: 80
             description: allow http
+          # HTTPS
           - direction: in
             protocol: tcp
             source_ips:
@@ -56,69 +37,14 @@
               - ::/0
             port: 443
             description: allow https
-        state: present
-        api_token: '{{ hcloud_token }}'
-
-    - name: "Create Rule: 02-k8s-internal"
-      hetzner.hcloud.firewall:
-        name: 02-k8s-internal
-        rules:
-          # Kubernetes API Server
-          - direction: in
-            protocol: tcp
-            source_ips:
-              - 10.0.1.0/24
-            port: 6443
-            description: k8s api server
-          # etcd
-          - direction: in
-            protocol: tcp
-            source_ips:
-              - 10.0.1.0/24
-            port: 2379-2380
-            description: etcd client/peer
-          # kubelet
-          - direction: in
-            protocol: tcp
-            source_ips:
-              - 10.0.1.0/24
-            port: 10250
-            description: kubelet api
-          # kube-scheduler
-          - direction: in
-            protocol: tcp
-            source_ips:
-              - 10.0.1.0/24
-            port: 10259
-            description: kube-scheduler
-          # kube-controller-manager
-          - direction: in
-            protocol: tcp
-            source_ips:
-              - 10.0.1.0/24
-            port: 10257
-            description: kube-controller-manager
-          # NodePort Services
-          - direction: in
-            protocol: tcp
-            source_ips:
-              - 10.0.1.0/24
-            port: 30000-32767
-            description: nodeport services
-          # Calico BGP
-          - direction: in
-            protocol: tcp
-            source_ips:
-              - 10.0.1.0/24
-            port: 179
-            description: calico bgp
-          # Calico VXLAN (falls verwendet)
+          # WireGuard
           - direction: in
             protocol: udp
             source_ips:
-              - 10.0.1.0/24
-            port: 4789
-            description: calico vxlan
+              - 0.0.0.0/0
+              - ::/0
+            port: 51820
+            description: allow wireguard
         state: present
         api_token: '{{ hcloud_token }}'
 
@@ -135,20 +61,9 @@
         location: '{{ hcloud_location }}'
         ssh_keys: '{{ hcloud_keys }}'
         firewalls:
-          # - 00-default
-          # - 02-k8s-internal
+          - web-server
         api_token: '{{ hcloud_token }}'
       register: server_result
-
-    # - name: Assign private IP to server
-    #   delegate_to: localhost
-    #   hetzner.hcloud.server_network:
-    #     network: k8s-network
-    #     server: '{{ hcloud_hostname }}'
-    #     ip: '{{ access_ip }}'
-    #     state: present
-    #     api_token: '{{ hcloud_token }}'
-    #   when: access_ip is defined
 
     - name: Reload Inventory
       ansible.builtin.meta: refresh_inventory

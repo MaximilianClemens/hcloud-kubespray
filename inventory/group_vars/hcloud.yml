@@ -7,4 +7,4 @@ hcloud_keys: "{{ lookup('yaml', 'vault.yml', 'key_names')}}"
 hcloud_firewall_default:
   - 00-default
 hcloud_firewall_custom: []
-hcloud_state: rebuild
+# hcloud_state: rebuild
