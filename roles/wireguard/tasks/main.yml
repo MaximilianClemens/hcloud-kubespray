@@ -1,3 +1,7 @@
+- name: add ipv6 address
+  include_tasks:
+    file: add_extra_ipv6.yml
+
 - name: Install WireGuard
   apt:
     name: wireguard
@@ -10,7 +14,6 @@
   # changed_when: true
   args:
     creates: /etc/wireguard/private.key
-
 
 - name: Save private key to file
   copy:
@@ -28,10 +31,11 @@
   set_fact:
     wg_private_key: "{{ private_key_file.content | b64decode }}"
 
-
 - name: Generate public key
   command: /bin/bash -c "echo '{{ wg_private_key }}' | wg pubkey"
   register: public_key
+  changed_when: false
+  failed_when: public_key.rc != 0
 
 - name: Set fact for peer keys
   set_fact:

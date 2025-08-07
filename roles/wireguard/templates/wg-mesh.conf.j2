@@ -4,16 +4,25 @@ PrivateKey = {{ wg_private_key }}
 ListenPort = 51820
 
 Table = off
+# Routen mit srcip zu anderen Mesh Nodes
 {% for host in groups['wireguard'] if host != inventory_hostname %}
-PostUp = ip route add 192.168.0.0/22 via {{ hostvars[host]['access_ip'] }} dev wg-mesh metric {{ 2000 + loop.index0 }}
-PostDown = ip route del 192.168.0.0/22 via {{ hostvars[host]['access_ip'] }} dev wg-mesh metric {{ 2000 + loop.index0 }}
+PreUp = ip -6 route replace {{ hostvars[host]['ipv6_wg_mesh'] }}/128 src {{ ipv6_wg_mesh }} dev {{ ipv6_wg_dev }} via {{ ipv6_wg_gw }} # {{ hostvars[host]['inventory_hostname'] }}
 {% endfor %}
+
+# Routen nach Hause
+{% for host in groups['wireguard_home_router'] if host != inventory_hostname %}
+PostUp = ip route add 192.168.0.0/22 via {{ hostvars[host]['access_ip'] }} dev wg-mesh metric {{ 2000 + loop.index0 }} # {{ hostvars[host]['inventory_hostname'] }}
+{% endfor %}
+
+# Extra IP für wgmesh
+PostUp = ip addr add {{ ip_wg2 }}/32 dev wg-mesh
 
 
 {% for host in groups['wireguard'] if host != inventory_hostname %}
 [Peer]
+# {{ inventory_hostname }}
 PublicKey = {{ hostvars[host]['my_public_key'] }}
-AllowedIPs = {{ hostvars[host]['access_ip'] }}/32, 192.168.0.0/22
-Endpoint = {{ hostvars[host]['ansible_host'] }}:51820
+AllowedIPs = {{ hostvars[host]['access_ip'] }}/32, 192.168.0.0/22, {{ hostvars[host]['ip_wg2'] }}/32
+Endpoint = {{ hostvars[host]['ipv6_wg_mesh'] }}:51820
 PersistentKeepalive = 25
 {% endfor %}

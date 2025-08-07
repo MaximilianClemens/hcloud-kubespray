@@ -5,5 +5,4 @@ inwx_password: "{{ lookup('yaml', 'vault.yml', 'inwx_password')}}"
 ansible_user: root
 ansible_python_interpreter: "/usr/bin/python3.12"
 
-ip: "{{ access_ip | default(ansible_default_ipv4.address) }}"
-# kube_apiserver_bind_address: "{{ ip }}"
+

@@ -1,11 +1,24 @@
 # Clustername
 cluster_name: hcloud1.k8s.gamma.red
 
+# Enable HELM and argo
+helm_enabled: true
+# argocd_enabled: true # Installation later via helm
+
 # Netzwerk-Settings
 kube_pods_subnet: 10.233.64.0/18
 kube_service_addresses: 10.233.0.0/18
 kube_proxy_mode: ipvs
 kube_proxy_strict_arp: true
+
+# 03.08
+# enable_dual_stack_networks: true # deprecated
+kube_pods_subnet_ipv6: fd85:ee78:d8a6:8607::1:0000/112
+kube_service_addresses_ipv6: fd85:ee78:d8a6:8607::1000/116
+# kube_network_node_prefix_ipv6: 120
+
+ipv4_stack: true
+ipv6_stack: true
 
 # DNS
 dns_mode: coredns
@@ -53,35 +66,3 @@ calico_vxlan_mode: 'Always'
 # # MTU Settings (wichtig für VXLAN)
 # calico_mtu: 1450  # Standard für VXLAN overhead
 
-
-## Cilium ##
-# kube_network_plugin: cilium
-
-# # Cilium ohne Overlay, nutzt WireGuard-Netz direkt
-# cilium_tunnel_mode: "disabled"
-
-# # eBPF-KubeProxy ersetzen für Performance
-# cilium_kube_proxy_replacement: true #"strict"
-
-# # Node-to-Node Routing (da WG)
-# cilium_auto_direct_node_routes: true
-
-# # Transparent LoadBalancer über Cilium
-# cilium_native_routing_cidr: "10.0.1.0/24"
-
-# # Metrics und Debug
-# cilium_enable_prometheus: true
-# cilium_enable_bandwidth_manager: true
-# cilium_enable_hubble: true
-
-# # systemd kompatible cgroup hierarchie
-# #cilium_cgroup_mode: "legacy"
-# kubelet_cgroup_driver: systemd
-# cilium_cgroup_auto_mount: false
-# cilium_enable_ipv4: true
-# cilium_enable_ipv6: true
-# cilium_preallocate_bpf_maps: false
-
-# kubelet_config_extra_args:
-#   cgroupDriver: systemd
-#   cgroupRoot: /

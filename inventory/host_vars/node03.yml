@@ -1,4 +1,5 @@
 hcloud_location: hel1
-access_ip: 10.0.1.8
 hcloud_type: cpx11
-# ip: 10.0.1.8
+
+access_ip: 10.0.1.8
+ip: 10.0.1.8
