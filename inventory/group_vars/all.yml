@@ -2,7 +2,7 @@
 hcloud_token: "{{ lookup('yaml', 'vault.yml', 'hcloud_token')}}"
 inwx_username: "{{ lookup('yaml', 'vault.yml', 'inwx_username')}}"
 inwx_password: "{{ lookup('yaml', 'vault.yml', 'inwx_password')}}"
-ansible_user: root
+ansible_user: automation
 ansible_python_interpreter: "/usr/bin/python3.12"
 
 

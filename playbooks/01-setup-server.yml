@@ -63,6 +63,14 @@
         firewalls:
           - web-server
         api_token: '{{ hcloud_token }}'
+        user_data: |
+          #cloud-config
+          users:
+            - name: automation
+              ssh-authorized-keys: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGKLOt0qZoqaRFmAy2/yCvwQWDKufpQRRPDz35gjkrW9 maximilian.clemens@gamma.red
+              sudo: ['ALL=(ALL) NOPASSWD:ALL']
+              groups: sudo
+              shell: /bin/bash
       register: server_result
 
     - name: Reload Inventory
@@ -118,8 +126,7 @@
         insertafter: '^#?\s*Defaults\s+env_keep\b'
         line: 'Defaults    env_keep += "SSH_AUTH_SOCK"'
 
-
-# - name: hcloud servers
-#   hosts: hcloud
-#   roles:
-#     - extra_ipv6
+- name: hcloud servers
+  hosts: hcloud
+  roles:
+    - server_setup
