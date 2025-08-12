@@ -1,3 +1,4 @@
 collections:
   - hetzner.hcloud
   - inwx.collection
+  - kubernetes.core

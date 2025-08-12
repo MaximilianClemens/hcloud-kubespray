@@ -1,0 +1,8 @@
+- hosts: localhost
+  environment:
+    K8S_AUTH_KUBECONFIG: "../inventory/artifacts/admin.conf"
+  roles:
+    - kube_base
+
+# - argocd
+# - keycloak

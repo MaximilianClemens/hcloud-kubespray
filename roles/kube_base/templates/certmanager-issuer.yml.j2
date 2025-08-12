@@ -1,0 +1,29 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-http
+spec:
+  acme:
+    email: maximilian.clemens@mailbox.org
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-http
+    solvers:
+      - http01:
+          ingress:
+            class: traefik-external
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging-http
+spec:
+  acme:
+    email: maximilian.clemens@mailbox.org
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-staging-http
+    solvers:
+      - http01:
+          ingress:
+            class: traefik-external

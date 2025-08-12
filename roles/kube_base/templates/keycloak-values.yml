@@ -1,0 +1,14 @@
+production: true
+
+auth:
+  adminPassword: "{{ lookup('yaml', 'vault.yml', 'keycloak').adminPassword }}"
+
+proxy: edge
+proxyHeaders: xforwarded
+extraEnvVars:
+  - name: KC_HTTP_ENABLED
+    value: "true"
+
+postgresql:
+  auth:
+    postgresPassword: "{{ lookup('yaml', 'vault.yml', 'keycloak').postgresPassword }}"

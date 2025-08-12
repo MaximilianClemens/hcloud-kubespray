@@ -1,0 +1,4 @@
+---
+- name: Install Kubernetes
+  ansible.builtin.import_playbook: ../kubespray/cluster.yml
+  become: true

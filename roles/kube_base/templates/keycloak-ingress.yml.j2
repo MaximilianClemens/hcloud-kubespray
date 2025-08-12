@@ -1,0 +1,50 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: keycloak-cert
+  namespace: keycloak
+spec:
+  secretName: keycloak-tls
+  issuerRef:
+    name: letsencrypt-http
+    kind: ClusterIssuer
+  commonName: auth.admin.gamma.red
+  dnsNames:
+    - auth.admin.gamma.red
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: keycloak-ingress-https
+  namespace: keycloak
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`auth.admin.gamma.red`)
+      services:
+        - name: keycloak
+          port: 80  # Keycloak Standard-Port
+      middlewares:
+        - name: keycloak-headers
+  tls:
+    secretName: keycloak-tls
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: keycloak-headers
+  namespace: keycloak
+spec:
+  headers:
+    customRequestHeaders:
+      X-Forwarded-Proto: "https"
+      X-Forwarded-Port: "443"
+      X-Forwarded-Host: "auth.admin.gamma.red"
+      X-Forwarded-For: ""  # Traefik setzt dies automatisch
+    customResponseHeaders:
+      X-Frame-Options: "SAMEORIGIN"
+      X-Content-Type-Options: "nosniff"
+      Referrer-Policy: "strict-origin-when-cross-origin"

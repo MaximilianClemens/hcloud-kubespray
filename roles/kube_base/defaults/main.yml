@@ -1,0 +1,20 @@
+traefik_namespace: traefik-system
+traefik_release: traefik
+traefik_ipv4: 188.245.217.191
+traefik_ipv6: 2a01:4f8:1c1a:9cef::1
+
+traefik_node: node02
+traefik_ingress_class: traefik-external
+traefik_version: 37.0.0
+
+longhorn_namespace: longhorn-system
+longhorn_release: longhorn
+longhorn_version: 1.9.1
+
+certmanager_release: cert-manager
+certmanager_namespace: cert-manager
+certmanager_version: v1.18.2
+
+keycloak_release: keycloak
+keycloak_namespace: keycloak
+keycloak_version: 25.0.2

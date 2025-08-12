@@ -1,8 +1,16 @@
+ansible_become: true
+# Make a copy of kubeconfig on the host that runs Ansible in {{ inventory_dir }}/artifacts
+kubeconfig_localhost: true
+# Use ansible_host as external api ip when copying over kubeconfig.
+# kubeconfig_localhost_ansible_host: false
+# Download kubectl onto the host that runs Ansible in {{ bin_dir }}
+kubectl_localhost: true
+
 # Clustername
 cluster_name: hcloud1.k8s.gamma.red
 
 # Enable HELM and argo
-helm_enabled: true
+# helm_enabled: true
 # argocd_enabled: true # Installation later via helm
 
 # Netzwerk-Settings

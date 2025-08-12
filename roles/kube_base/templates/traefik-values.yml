@@ -1,0 +1,55 @@
+---
+# helm-chart/values.yaml
+deployment:
+  kind: Deployment
+  replicas: 1
+  
+nodeSelector:
+  kubernetes.io/hostname: {{ traefik_node }}
+  
+service:
+  type: NodePort
+  externalIPs:
+    - "{{ traefik_ipv4 }}"
+    - "{{ traefik_ipv6 }}"
+  ipFamilyPolicy: PreferDualStack
+  ipFamilies:
+    - IPv4
+    - IPv6
+
+ports:
+  web:
+    nodePort: 30080
+    # hostPort: 80
+    exposedPort: 80
+    redirections:
+      entryPoint:
+        permanent: true
+        scheme: https
+        to: websecure
+  websecure:
+    nodePort: 30443
+    exposedPort: 443
+    # hostPort: 443
+    allowACMEByPass: true
+
+providers:
+  kubernetesIngress:
+    ingressClass: {{ traefik_ingress_class }}
+    namespaces: []
+
+# Logs
+logs:
+  general:
+    level: INFO
+  access:
+    enabled: true
+
+# Metrics für Monitoring
+metrics:
+  prometheus:
+    addEntryPointsLabels: true
+    addServicesLabels: true
+    addRoutersLabels: true
+
+# hostNetwork: true
