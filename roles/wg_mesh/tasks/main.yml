@@ -64,6 +64,7 @@
   when: wg_device_type != 'fritzbox'
 
 - name: Template WireGuard config FRITZ
+  become: false
   template:
     src: wg-mesh.conf.j2
     dest: "wg_{{ inventory_hostname }}.conf"

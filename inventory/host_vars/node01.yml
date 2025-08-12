@@ -1,5 +1,6 @@
 hcloud_location: fsn1 # alternativ nbg1
 wg_address: 10.0.1.6/32
+wg_private_key: "{{ lookup('yaml', 'vault.yml', 'wg_private_keys').node01}}"
 
 access_ip: 10.0.1.6
 ip: 10.0.1.6

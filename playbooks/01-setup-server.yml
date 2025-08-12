@@ -67,7 +67,7 @@
           #cloud-config
           users:
             - name: automation
-              ssh-authorized-keys: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGKLOt0qZoqaRFmAy2/yCvwQWDKufpQRRPDz35gjkrW9 maximilian.clemens@gamma.red
+              ssh-authorized-keys: {{ public_keys }}
               sudo: ['ALL=(ALL) NOPASSWD:ALL']
               groups: sudo
               shell: /bin/bash
@@ -128,5 +128,6 @@
 
 - name: hcloud servers
   hosts: hcloud
+  become: true
   roles:
     - server_setup

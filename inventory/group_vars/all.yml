@@ -5,4 +5,4 @@ inwx_password: "{{ lookup('yaml', 'vault.yml', 'inwx_password')}}"
 ansible_user: automation
 ansible_python_interpreter: "/usr/bin/python3.12"
 
-
+public_keys: "{{ lookup('yaml', 'vault.yml', 'public_keys')}}"

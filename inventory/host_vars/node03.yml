@@ -1,6 +1,7 @@
 hcloud_location: hel1
 hcloud_type: cpx11
 wg_address: 10.0.1.8/32
+wg_private_key: "{{ lookup('yaml', 'vault.yml', 'wg_private_keys').node03}}"
 
 access_ip: 10.0.1.8
 ip: 10.0.1.8
