@@ -1,0 +1,5 @@
+hcloud_type: cx22
+access_ip: 10.0.1.5
+ip_wg2: 10.0.1.15
+
+wg_address: 10.0.1.5/32

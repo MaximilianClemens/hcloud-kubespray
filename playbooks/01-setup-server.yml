@@ -117,3 +117,9 @@
         dest: /etc/sudoers
         insertafter: '^#?\s*Defaults\s+env_keep\b'
         line: 'Defaults    env_keep += "SSH_AUTH_SOCK"'
+
+
+# - name: hcloud servers
+#   hosts: hcloud
+#   roles:
+#     - extra_ipv6

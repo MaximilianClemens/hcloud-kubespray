@@ -1,0 +1,20 @@
+[Interface]
+Address = {{ wg_address }}
+PrivateKey = {{ wg_private_key }}
+ListenPort = {{ wg_port }}
+
+{% if wg_device_type != 'fritzbox' %}
+{% for host in groups['wireguard'] if host != inventory_hostname and hostvars[host]['wg_device_type'] != 'fritzbox'  %}
+PreUp = ip -6 route replace {{ hostvars[host]['ipv6_wg_mesh'] }}/128 src {{ ipv6_wg_mesh }} dev {{ ipv6_wg_dev }} via {{ ipv6_wg_gw }} # {{ hostvars[host]['inventory_hostname'] }}
+{% endfor %}
+{% endif %}
+
+{% for host in groups['wireguard'] if host != inventory_hostname %}
+[Peer]
+# {{ hostvars[host]['inventory_hostname'] }}
+PublicKey = {{ hostvars[host]['wg_public_key'] }}
+AllowedIPs = {{ hostvars[host]['wg_address'] }}
+Endpoint = {{ hostvars[host]['wg_endpoint'] }}:{{ hostvars[host]['wg_port'] }}
+PersistentKeepalive = 25
+
+{% endfor %}

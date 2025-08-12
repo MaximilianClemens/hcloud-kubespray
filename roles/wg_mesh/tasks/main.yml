@@ -1,0 +1,72 @@
+- name: add ipv6 address
+  include_tasks:
+    file: add_extra_ipv6.yml
+  when: wg_device_type != 'fritzbox' 
+   
+- name: Install WireGuard
+  apt:
+    name: wireguard
+    state: present
+    update_cache: yes
+  when: wg_device_type != 'fritzbox' 
+
+- name: Generate private key if not exists
+  command: wg genkey
+  register: wg_private_key_gen
+  when: wg_private_key is not defined
+  args:
+    creates: /etc/wireguard/private.key
+
+- name: Save private key to file
+  copy:
+    content: "{{ wg_private_key_gen.stdout }}"
+    dest: /etc/wireguard/private.key
+    mode: '0600'
+  when: >-
+    wg_private_key_gen is defined and
+    wg_private_key_gen.stdout is defined and
+    wg_private_key_gen.changed
+
+- name: Slurp private key (base64-encoded)
+  slurp:
+    src: /etc/wireguard/private.key
+  register: private_key_file
+  when: wg_private_key is not defined
+
+- name: Decode private key
+  set_fact:
+    wg_private_key: "{{ private_key_file.content | b64decode }}"
+  when: wg_private_key is not defined
+
+- name: Generate public key
+  command: /bin/bash -c "echo '{{ wg_private_key }}' | wg pubkey"
+  register: wg_public_key_gen
+  changed_when: false
+  failed_when: wg_public_key_gen.rc != 0
+  when: wg_device_type != 'fritzbox' and wg_public_key is not defined
+
+- name: Set fact for peer keys
+  set_fact:
+    wg_public_key: "{{ wg_public_key_gen.stdout }}"
+  when: wg_device_type != 'fritzbox' and wg_public_key is not defined
+
+- name: Set fact for port
+  set_fact:
+    wg_port: "{{ wg_port }}"
+    wg_device_type: "{{ wg_device_type }}"
+
+- name: Template WireGuard config
+  template:
+    src: wg-mesh.conf.j2
+    dest: /etc/wireguard/wg-mesh.conf
+    mode: '0600'
+  notify: restart wireguard
+  when: wg_device_type != 'fritzbox'
+
+- name: Template WireGuard config FRITZ
+  template:
+    src: wg-mesh.conf.j2
+    dest: "wg_{{ inventory_hostname }}.conf"
+    mode: '0600'
+  when: wg_device_type == 'fritzbox'
+  delegate_to: localhost

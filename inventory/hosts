@@ -1,14 +1,19 @@
+admin  hcloud_hostname=admin.kube.gamma.red
 node01 hcloud_hostname=node01.kube.gamma.red
 node02 hcloud_hostname=node02.kube.gamma.red
 ; node03 hcloud_hostname=node03.kube.gamma.red
+fritz.box
 
 [hcloud]
+admin
 node01
 node02
 
 [wireguard]
+admin
 node01
 node02
+fritz.box
 
 [kube_control_plane]
 node01

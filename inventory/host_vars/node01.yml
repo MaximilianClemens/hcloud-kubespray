@@ -1,6 +1,7 @@
 hcloud_location: fsn1 # alternativ nbg1
+wg_address: 10.0.1.6/32
 
 access_ip: 10.0.1.6
 ip: 10.0.1.6
 
-ip_wg2: 10.0.1.16
+# ip_wg2: 10.0.1.16

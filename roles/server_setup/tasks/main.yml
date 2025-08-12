@@ -1,0 +1,56 @@
+---
+- name: Install required packages
+  apt:
+    name:
+      - sudo
+      - fail2ban
+    state: present
+    update_cache: yes
+
+- name: Create group 'remote_login'
+  group:
+    name: remote_login
+    state: present
+
+- name: Create group 'sudo_nopw'
+  group:
+    name: sudo_nopw
+    state: present
+
+- name: Create user 'automation' with specified groups
+  user:
+    name: automation
+    groups: "remote_login,sudo_nopw"
+    append: yes
+    shell: /bin/bash
+    state: present
+    create_home: yes
+
+- name: Add public key to 'automation' user
+  authorized_key:
+    user: automation
+    state: present
+    key: "{{ lookup('file', '{{ role_path }}/files/maximilian.clemens_ed25519.pub') }}"
+
+- name: Configure sudoers for 'sudo_nopw' group to allow passwordless sudo
+  copy:
+    dest: /etc/sudoers.d/sudo_nopw
+    content: |
+      %sudo_nopw ALL=(ALL) NOPASSWD:ALL
+    mode: 0440
+
+- name: Place SSH configuration in /etc/ssh/sshd_config.d/01-gammared.conf
+  template:
+    src: 01-gammared.conf.j2
+    dest: /etc/ssh/sshd_config.d/01-gammared.conf
+    mode: 0644
+  notify:
+    - Restart SSH
+
+- name: Configure fail2ban for SSH protection in a separate file
+  template:
+    src: fail2ban-ssh.conf.j2
+    dest: /etc/fail2ban/jail.d/ssh.conf
+    mode: 0644
+  notify:
+    - Restart Fail2ban

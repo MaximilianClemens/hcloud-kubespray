@@ -1,0 +1,9 @@
+wg_address: 192.168.0.1/22
+wg_device_type: fritzbox
+
+wg_port: 55773
+wg_private_key: "{{ lookup('yaml', 'vault.yml', 'fritz').wg_private_key}}"
+wg_public_key: "RCll8JPVlZygibjzrPNU93b8sIKeXOyP8gw30mMBzxQ="
+wg_dns: 192.168.0.1
+wg_endpoint: 9622oz0c349inw57.myfritz.net
+# DNS = fritz.box

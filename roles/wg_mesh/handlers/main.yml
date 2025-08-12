@@ -6,3 +6,4 @@
     state: restarted
     enabled: true
     daemon_reload: true
+  when: wg_device_type != 'fritzbox'
