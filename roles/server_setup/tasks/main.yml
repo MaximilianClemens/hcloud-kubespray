@@ -30,7 +30,8 @@
   authorized_key:
     user: automation
     state: present
-    key: "{{ public_keys }}"
+    key: "{{ item }}"
+  with_items: "{{ public_keys }}"
 
 - name: Configure sudoers for 'sudo_nopw' group to allow passwordless sudo
   copy:

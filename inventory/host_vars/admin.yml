@@ -1,4 +1,5 @@
 hcloud_type: cx22
+hcloud_state: present
 access_ip: 10.0.1.5
 ip_wg2: 10.0.1.15
 

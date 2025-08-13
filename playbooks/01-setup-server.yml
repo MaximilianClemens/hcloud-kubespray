@@ -67,7 +67,10 @@
           #cloud-config
           users:
             - name: automation
-              ssh-authorized-keys: {{ public_keys }}
+              ssh-authorized-keys:
+          {% for key in public_keys %}
+                - {{ key }}
+          {% endfor %}
               sudo: ['ALL=(ALL) NOPASSWD:ALL']
               groups: sudo
               shell: /bin/bash
