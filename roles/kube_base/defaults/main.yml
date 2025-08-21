@@ -1,9 +1,9 @@
 traefik_namespace: traefik-system
 traefik_release: traefik
-traefik_ipv4: 188.245.217.191
-traefik_ipv6: 2a01:4f8:1c1a:9cef::1
+traefik_node: node01
+traefik_ipv4: "{{ hostvars[traefik_node]['ipv4'] }}"
+traefik_ipv6: "{{ hostvars[traefik_node]['ipv6'] }}"
 
-traefik_node: node02
 traefik_ingress_class: traefik-external
 traefik_version: 37.0.0
 
@@ -18,3 +18,7 @@ certmanager_version: v1.18.2
 keycloak_release: keycloak
 keycloak_namespace: keycloak
 keycloak_version: 25.0.2
+
+homeassistant_release: hass
+homeassistant_namespace: home-hass
+homeassistant_version: 0.3.15

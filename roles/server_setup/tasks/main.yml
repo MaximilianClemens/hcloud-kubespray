@@ -7,6 +7,21 @@
     state: present
     update_cache: yes
 
+- name: Configure fail2ban for SSH protection in a separate file
+  template:
+    src: fail2ban-ssh.conf.j2
+    dest: /etc/fail2ban/jail.d/ssh.conf
+    mode: 0644
+  notify:
+    - Restart Fail2ban
+
+- name: Enable SSH forwarding for sudo
+  become: true
+  ansible.builtin.lineinfile:
+    dest: /etc/sudoers
+    insertafter: '^#?\s*Defaults\s+env_keep\b'
+    line: 'Defaults    env_keep += "SSH_AUTH_SOCK"'
+    
 - name: Create group 'remote_login'
   group:
     name: remote_login
@@ -48,10 +63,3 @@
   notify:
     - Restart SSH
 
-- name: Configure fail2ban for SSH protection in a separate file
-  template:
-    src: fail2ban-ssh.conf.j2
-    dest: /etc/fail2ban/jail.d/ssh.conf
-    mode: 0644
-  notify:
-    - Restart Fail2ban

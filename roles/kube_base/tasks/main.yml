@@ -52,23 +52,43 @@
     state: present
     template: 'certmanager-issuer.yml.j2'
 
-# keycloak
-
-- name: "keycloak: Add helm chart repo"
+# Home Assistant
+- name: "homeassistant: Add helm chart repo"
   kubernetes.core.helm_repository:
-    name: bitnami 
-    repo_url: "https://charts.bitnami.com/bitnami"
+    name: pajikos
+    repo_url: "http://pajikos.github.io/home-assistant-helm-chart/"
 
-- name: "keycloak: Deploy with values loaded from template"
+- name: "homeassistant: Deploy with values loaded from template"
   kubernetes.core.helm:
-    name: "{{ keycloak_release }}"
+    name: "{{ homeassistant_release }}"
     create_namespace: true
-    chart_ref: bitnami/keycloak
-    release_namespace: "{{ keycloak_namespace }}"
-    chart_version: "{{ keycloak_version }}"
-    values: "{{ lookup('template', 'keycloak-values.yml') | from_yaml }}"
+    chart_ref: pajikos/home-assistant
+    release_namespace: "{{ homeassistant_namespace }}"
+    chart_version: "{{ homeassistant_version }}"
+    values: "{{ lookup('template', 'homeassistant-values.yml') | from_yaml }}"
 
-- name: "cert-manager: Create Issuer"
+- name: "homeassistant: Create Issuer"
   kubernetes.core.k8s:
     state: present
-    template: 'keycloak-ingress.yml.j2'
+    template: 'homeassistant-issuer.yml.j2'
+
+# # keycloak
+
+# - name: "keycloak: Add helm chart repo"
+#   kubernetes.core.helm_repository:
+#     name: bitnami 
+#     repo_url: "https://charts.bitnami.com/bitnami"
+
+# - name: "keycloak: Deploy with values loaded from template"
+#   kubernetes.core.helm:
+#     name: "{{ keycloak_release }}"
+#     create_namespace: true
+#     chart_ref: bitnami/keycloak
+#     release_namespace: "{{ keycloak_namespace }}"
+#     chart_version: "{{ keycloak_version }}"
+#     values: "{{ lookup('template', 'keycloak-values.yml') | from_yaml }}"
+
+# - name: "keycloak: Ingress + SSL"
+#   kubernetes.core.k8s:
+#     state: present
+#     template: 'keycloak-ingress.yml.j2'

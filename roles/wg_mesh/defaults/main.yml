@@ -1,2 +1,3 @@
 wg_device_type: generic
 wg_port: 51820
+netplan_config_path: /etc/netplan/50-cloud-init.yaml

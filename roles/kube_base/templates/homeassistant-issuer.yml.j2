@@ -1,0 +1,50 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: home-hass-cert
+  namespace: home-hass
+spec:
+  secretName: home-hass-tls
+  issuerRef:
+    name: letsencrypt-http
+    kind: ClusterIssuer
+  commonName: hass.home.gamma.red
+  dnsNames:
+    - hass.home.gamma.red
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: home-hass-ingress-https
+  namespace: home-hass
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`hass.home.gamma.red`)
+      services:
+        - name: hass-home-assistant
+          port: 8080
+      middlewares:
+        - name: home-hass-headers
+  tls:
+    secretName: home-hass-tls
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: home-hass-headers
+  namespace: home-hass
+spec:
+  headers:
+    customRequestHeaders:
+      X-Forwarded-Proto: "https"
+      X-Forwarded-Port: "443"
+      X-Forwarded-Host: "hass.home.gamma.red"
+      X-Forwarded-For: ""  # Traefik setzt dies automatisch
+    customResponseHeaders:
+      X-Frame-Options: "SAMEORIGIN"
+      X-Content-Type-Options: "nosniff"
+      Referrer-Policy: "strict-origin-when-cross-origin"

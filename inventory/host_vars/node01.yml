@@ -1,7 +1,13 @@
-hcloud_location: fsn1 # alternativ nbg1
+ansible_host: 159.69.73.238
+ipv4: 159.69.73.238
+ipv6: 2a01:4f8:231:18df::2
+
+ipv6_network_mask: "64"
+
+# hcloud_location: fsn1 # alternativ nbg1
 wg_address: 10.0.1.6/32
 wg_private_key: "{{ lookup('yaml', 'vault.yml', 'wg_private_keys').node01}}"
-
+netplan_config_path: /etc/netplan/01-netcfg.yaml
 access_ip: 10.0.1.6
 ip: 10.0.1.6
 

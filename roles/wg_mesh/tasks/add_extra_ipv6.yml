@@ -1,6 +1,6 @@
 - name: Load existing Netplan config
   slurp:
-    src: /etc/netplan/50-cloud-init.yaml
+    src: "{{ netplan_config_path }}"
   register: netplan_raw
 
 - name: Parse YAML content
@@ -9,7 +9,7 @@
 
 - name: Check if IPv6 address already exists
   set_fact:
-    ipv6_already_present: "{{ ipv6_wg_mesh_net in netplan_config.network.ethernets.eth0.addresses }}"
+    ipv6_already_present: "{{ ipv6_wg_mesh_net in netplan_config.network.ethernets[ipv6_wg_dev].addresses }}"
 
 - name: Ensure new IPv6 address is present
   set_fact:
@@ -18,9 +18,9 @@
         netplan_config | combine({
           'network': {
             'ethernets': {
-              'eth0': {
+              ipv6_wg_dev: {
                 'addresses': (
-                  netplan_config.network.ethernets.eth0.addresses | union([ipv6_wg_mesh_net])
+                  netplan_config.network.ethernets[ipv6_wg_dev].addresses | union([ipv6_wg_mesh_net])
                 )
               }
             }
@@ -31,7 +31,7 @@
 
 - name: Write updated Netplan config
   copy:
-    dest: /etc/netplan/50-cloud-init.yaml
+    dest: "{{ netplan_config_path }}"
     content: "{{ netplan_config | to_nice_yaml(indent=2) }}"
   register: netplan_result
   when: not ipv6_already_present

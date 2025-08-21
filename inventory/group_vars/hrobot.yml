@@ -1,0 +1,7 @@
+ipv6_wg_mesh: "{{ (ipv6 + '/' + ipv6_network_mask) | ansible.utils.ipaddr('20') | ansible.utils.ipaddr('address') }}"
+ipv6_wg_mesh_net: "{{ (ipv6 + '/' + ipv6_network_mask) | ansible.utils.ipaddr('20') }}"
+
+ipv6_wg_gw: "fe80::1"
+ipv6_wg_dev: "enp0s31f6"
+
+wg_endpoint: "{{ (ipv6 + '/' + ipv6_network_mask) | ansible.utils.ipaddr('20') | ansible.utils.ipaddr('address') }}"

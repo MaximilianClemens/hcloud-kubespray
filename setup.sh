@@ -6,3 +6,4 @@ python3 -m venv .venv
 
 git clone https://github.com/kubernetes-sigs/kubespray.git
 .venv/bin/pip install -r kubespray/requirements.txt
+#wget https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.12/dist/images/kubectl-ko

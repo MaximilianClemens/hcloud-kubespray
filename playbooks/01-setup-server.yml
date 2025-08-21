@@ -76,8 +76,33 @@
               shell: /bin/bash
       register: server_result
 
+    - name: Create PTR-Record for ipv4 at hcloud
+      delegate_to: localhost
+      hetzner.hcloud.rdns:
+        server: '{{ hcloud_hostname }}'
+        ip_address: '{{ ipv4 }}'
+        dns_ptr: '{{ hcloud_hostname }}'
+        state: present
+        api_token: '{{ hcloud_token }}'
+
+    - name: Create PTR-Record for ipv6 at hcloud
+      delegate_to: localhost
+      hetzner.hcloud.rdns:
+        server: '{{ hcloud_hostname }}'
+        ip_address: '{{ ipv6 }}'
+        dns_ptr: '{{ hcloud_hostname }}'
+        state: present
+        api_token: '{{ hcloud_token }}'
+
     - name: Reload Inventory
       ansible.builtin.meta: refresh_inventory
+    
+    - name: Wait for Server
+      ansible.builtin.wait_for_connection:
+
+- name: hcloud servers
+  hosts: hcloud:hrobot
+  tasks:
 
     - name: Create A-Record at INWX DNS
       delegate_to: localhost
@@ -101,36 +126,26 @@
         username: '{{ inwx_username }}'
         password: '{{ inwx_password }}'
 
-    - name: Create PTR-Record for ipv4 at hcloud
-      delegate_to: localhost
-      hetzner.hcloud.rdns:
-        server: '{{ hcloud_hostname }}'
-        ip_address: '{{ ipv4 }}'
-        dns_ptr: '{{ hcloud_hostname }}'
-        state: present
-        api_token: '{{ hcloud_token }}'
-
-    - name: Create PTR-Record for ipv6 at hcloud
-      delegate_to: localhost
-      hetzner.hcloud.rdns:
-        server: '{{ hcloud_hostname }}'
-        ip_address: '{{ ipv6 }}'
-        dns_ptr: '{{ hcloud_hostname }}'
-        state: present
-        api_token: '{{ hcloud_token }}'
-
-    - name: Wait for Server
-      ansible.builtin.wait_for_connection:
-
-    - name: Enable SSH forwarding for sudo
-      become: true
-      ansible.builtin.lineinfile:
-        dest: /etc/sudoers
-        insertafter: '^#?\s*Defaults\s+env_keep\b'
-        line: 'Defaults    env_keep += "SSH_AUTH_SOCK"'
-
 - name: hcloud servers
-  hosts: hcloud
+  hosts: hcloud:hrobot
   become: true
+  pre_tasks:
+  - name: Testverbindung mit primary user
+    ping:
+    ignore_errors: true
+    ignore_unreachable: true
+    register: ping_result
+
+  - debug:
+      var: ping_result
+
+  - name: Benutzer auf Fallback setzen falls primary fehlschlägt
+    set_fact:
+      ansible_user: "root"
+    when: ping_result is failed or ping_result is unreachable
+
+  - name: Verbindung neu aufbauen falls Benutzer gewechselt wurde
+    meta: reset_connection
+    when: ping_result is failed or ping_result is unreachable
   roles:
     - server_setup
